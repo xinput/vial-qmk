@@ -52,3 +52,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     }
 
 #endif // IDLE_TIMEOUT_ENABLE
+
+// INITIAL STARTUP
+
+__attribute__ ((weak)) void keyboard_post_init_keymap(void) {}
+
+void keyboard_post_init_user(void) {
+    keyboard_post_init_keymap();
+     #ifdef IDLE_TIMEOUT_ENABLE
+        timeout_timer = timer_read(); // set inital time for ide timeout
+    #endif
+}
