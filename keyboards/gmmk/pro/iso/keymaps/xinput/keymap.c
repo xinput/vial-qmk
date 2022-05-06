@@ -15,7 +15,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include QMK_KEYBOARD_H
-#include "xinput.h"
+#include "xinput.c"
 #include "rgb_matrix_map.h"
 
 // clang-format off
