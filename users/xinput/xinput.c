@@ -53,13 +53,48 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #endif // IDLE_TIMEOUT_ENABLE
 
-// INITIAL STARTUP
+#if defined(IDLE_TIMEOUT_ENABLE)       // timer features
+    __attribute__((weak)) void matrix_scan_keymap(void) {}
 
-__attribute__ ((weak)) void keyboard_post_init_keymap(void) {}
+    void matrix_scan_user(void) {
+        #ifdef IDLE_TIMEOUT_ENABLE
+            timeout_tick_timer();
+        #endif
+        matrix_scan_keymap();
+    }
+#endif   // IDLE_TIMEOUT_ENABLE
 
-void keyboard_post_init_user(void) {
-    keyboard_post_init_keymap();
-     #ifdef IDLE_TIMEOUT_ENABLE
-        timeout_timer = timer_read(); // set inital time for ide timeout
-    #endif
-}
+// PROCESS KEY CODES
+__attribute__ ((weak))  bool process_record_keymap(uint16_t keycode, keyrecord_t *record) { return true; }
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    if (!process_record_keymap(keycode, record)) { return false; }
+    switch (keycode) {
+
+#ifdef IDLE_TIMEOUT_ENABLE
+    case RGB_TOI:
+        if(record->event.pressed) {
+            timeout_update_threshold(true);
+        } else  unregister_code16(keycode);
+        break;
+    case RGB_TOD:
+        if(record->event.pressed) {
+             timeout_update_threshold(false);  //decrease timeout
+        } else  unregister_code16(keycode);
+        break;
+#endif // IDLE_TIMEOUT_ENABLE
+
+    default:
+        if (record->event.pressed) {
+            #ifdef RGB_MATRIX_ENABLE
+                rgb_matrix_enable();
+            #endif
+            #ifdef IDLE_TIMEOUT_ENABLE
+                timeout_reset_timer();  //reset activity timer
+            #endif
+        }
+        break;
+
+    }
+    return true;
+};
