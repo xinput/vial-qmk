@@ -115,10 +115,11 @@
 #define ENABLE_RGB_MATRIX_SOLID_MULTISPLASH
 
 /* Send up to 4 key press events per scan */
-#define QMK_KEYS_PER_SCAN 4
+#define QMK_KEYS_PER_SCAN 12
 
 /* Set debounce time to 5ms */
 #define DEBOUNCE 5
 
 /* Force NKRO on boot up regardless of the setting saved in the EEPROM (uncomment to enable it) */
 // #define FORCE_NKRO
+#define USB_POLLING_INTERVAL_MS 1
